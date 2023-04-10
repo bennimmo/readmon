@@ -2,7 +2,7 @@
     <title>Readmon</title>
     <script type="text/javascript">
 
-        var LEVEL_LENGTH = 10;
+
         var COLOURS = [
             'red',
             'blue',
@@ -23,16 +23,17 @@
             'https://media.tenor.com/fm16tObti1AAAAAC/great-job-well-done.gif'
 
         ];
-        function combine(lista, listb) {
+        function combine(lista, listb, length) {
             var combined = [];
-            while (combined.length < LEVEL_LENGTH) {
+            while (combined.length < length) {
                 combined.push(lista[Math.floor(Math.random() * lista.length)]);
                 combined.push(listb[Math.floor(Math.random() * listb.length)]);
             }
-            return combined.slice(0, LEVEL_LENGTH);
+            return combined.slice(0, length);
         }
 
         function createLevels(words){
+            var length = 15;
             var levels = [];
             levels.push(combine(words.slice(0, 3), words.slice(0, 3)));
             for (var i = 0; i <= words.length; i++) {

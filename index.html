@@ -1,0 +1,107 @@
+<head>
+    <title>Readmon</title>
+    <script type="text/javascript">
+
+        var COLOURS = [
+            'red',
+            'blue',
+            'green',
+            'orange',
+            'purple',
+            'black',
+            'brown',
+            'grey',
+        ]
+        var FONTS = [
+            'Arial',
+            'Times New Roman',
+            'Courier New',
+            'Verdana',
+            'Georgia',
+            'Impact',
+            'Comic Sans MS',
+            'Trebuchet MS',
+            'Lucida Console',
+            'Palatino Linotype',
+        ]
+
+        var WELLDONE_GIFS = [
+            'https://www.icegif.com/wp-content/uploads/icegif-2713.gif',
+            'https://media.tenor.com/fm16tObti1AAAAAC/great-job-well-done.gif',
+            'https://gifdb.com/images/high/well-done-clapping-ynhdhea8tmd1hsyt.gif',
+            'https://gifdb.com/images/high/well-done-timmy-wo0yjcwiyfuttnno.gif',
+            'https://gifdb.com/images/file/well-done-t-rex-clapping-qau5q9pbev7lxv3g.gif'
+        ];
+        function combine(lista, listb, length) {
+            var combined = [];
+            while (combined.length < length) {
+                combined.push(listb[Math.floor(Math.random() * listb.length)]);
+                combined.push(lista[Math.floor(Math.random() * lista.length)]);
+            }
+            return combined.slice(0, length);
+        }
+
+        function createLevels(words){
+            var length = 15;
+            var levels = [];
+            levels.push(combine(words.slice(0, 3), words.slice(0, 3), length));
+            for (var i = 0; i <= words.length; i++) {
+                if (i + 3 >= words.length) break;
+                levels.push(combine(words.slice(0, i+2), [words[i + 3]], length));
+            }
+            return levels;
+        }
+
+        var words = [
+            'I',
+            'the',
+            'go',
+            'no',
+            'to',
+            'he',
+            'my',
+            'we',
+            'me',
+            'be',
+            'was',
+            'all',
+            'you',
+            'they',
+            'she',
+            'here'
+        ];
+
+        var levels = createLevels(words);
+        var level = 0;
+        var word = 0;
+
+        document.onclick = function() {
+            if (word >= levels[level].length) {
+                level++;
+                word = 0;
+                document.getElementById('word').innerHTML = '<img src="' + WELLDONE_GIFS[Math.floor(Math.random() * WELLDONE_GIFS.length)] + '" />';
+                return;
+            }
+            document.getElementById('level').innerHTML = level + 1 + " of " + levels.length;
+            document.getElementById('word').innerHTML = levels[level][word];
+            document.getElementById('word').style.color = COLOURS[Math.floor(Math.random() * COLOURS.length)];
+            document.getElementById('word').style.fontFamily = FONTS[Math.floor(Math.random() * FONTS.length)];
+            word++;
+        }
+    </script>
+</head>
+<body>
+    <h1>Readmon - Level <span id="level"></span></h1>
+    <div style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        padding-top: 240px;
+        font-size: 200px;
+    " id="word">
+        Click to start
+    </div>
+</body>
+
+

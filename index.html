@@ -105,15 +105,19 @@
                 state.word = 0;
             }
         }
-        
-        document.onclick = function() {
+
+        function updateUI() {
+            if (state.level >= levels.length) {
+                state.level = 0;
+                state.word = 0;
+            }
             if (state.word >= levels[state.level].length) {
                 state.level++;
                 state.word = 0;
                 document.getElementById('word').innerHTML = '<img src="' + WELLDONE_GIFS[Math.floor(Math.random() * WELLDONE_GIFS.length)] + '" />';
                 return;
             }
-            console.log(state, state.level, state.word, levels.length);
+
             document.getElementById('level').innerHTML = state.level + 1 + " of " + levels.length;
             document.getElementById('word').innerHTML = levels[state.level][state.word];
             document.getElementById('word').style.color = COLOURS[Math.floor(Math.random() * COLOURS.length)];
@@ -125,16 +129,25 @@
     </script>
 </head>
 <body>
-    <h1 onclick="level++; word = 0;">Readmon - Level <span id="level"></span></h1>
+    <h1 onclick="state.level++; state.word = 0; updateUI();">Readmon - Level <span id="level"></span></h1>
     <div style="
         display: flex;
         justify-content: center;
         align-items: center;
         height: 200px;
-        padding-top: 240px;
+        padding: 240px 0px 240px 0px;
         font-size: 200px;
-    " id="word">
-        Click to start
+        width: 100%;
+    " id="word" onclick="updateUI()">
+        <ul style="font-size: 20px;">
+            <li>This is designed to teach kids to read the tricky words</li>
+            <li>Random words will be shown starting with just three</li>
+            <li>Each new level will introduce a new word and show it often while interspersing it with the previous words for reinforcement</li>
+            <li>It will remember your level if you use the same device</li>
+            <li>Click on the text top left to skip forward levels</li>
+            <li>Click on the word to get to the next word</li>
+            <li>Click on this text to start</li>
+        </ul>
     </div>
 
     <div style="position: absolute; bottom: 0px; left: 0px; width: 100%">

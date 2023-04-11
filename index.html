@@ -2,7 +2,7 @@
     <title>Readmon</title>
     <script type="text/javascript">
 
-        var COLOURS = [
+        const COLOURS = [
             'red',
             'blue',
             'green',
@@ -11,11 +11,10 @@
             'black',
             'brown',
             'grey',
-        ]
-        var FONTS = [
+        ];
+        const FONTS = [
             'Arial',
             'Times New Roman',
-            'Courier New',
             'Verdana',
             'Georgia',
             'Impact',
@@ -23,36 +22,60 @@
             'Trebuchet MS',
             'Lucida Console',
             'Palatino Linotype',
-        ]
-
-        var WELLDONE_GIFS = [
+        ];
+        const WELLDONE_GIFS = [
             'https://www.icegif.com/wp-content/uploads/icegif-2713.gif',
             'https://media.tenor.com/fm16tObti1AAAAAC/great-job-well-done.gif',
             'https://gifdb.com/images/high/well-done-clapping-ynhdhea8tmd1hsyt.gif',
             'https://gifdb.com/images/high/well-done-timmy-wo0yjcwiyfuttnno.gif',
             'https://gifdb.com/images/file/well-done-t-rex-clapping-qau5q9pbev7lxv3g.gif'
         ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         function combine(lista, listb, length) {
-            var combined = [];
+            const combined = [];
+            lista = shuffleArray(lista);
+            while (lista.length < length) {
+                lista = lista.concat(lista);
+            }
+            let listaPosition = 0;
             while (combined.length < length) {
                 combined.push(listb[Math.floor(Math.random() * listb.length)]);
-                combined.push(lista[Math.floor(Math.random() * lista.length)]);
+                // with a chance of 1 in 3 add another lista item
+                if (Math.floor(Math.random() * 3) == 0) {
+                    combined.push(lista[listaPosition]);
+                    listaPosition++;
+                }
+                combined.push(lista[listaPosition]);
+                listaPosition++;
             }
             return combined.slice(0, length);
         }
 
         function createLevels(words){
+            let i;
             var length = 15;
             var levels = [];
             levels.push(combine(words.slice(0, 3), words.slice(0, 3), length));
-            for (var i = 0; i <= words.length; i++) {
+            for (i = 0; i <= words.length; i++) {
                 if (i + 3 >= words.length) break;
-                levels.push(combine(words.slice(0, i+2), [words[i + 3]], length));
+                levels.push(combine(words.slice(0, i+3), [words[i + 3]], length));
+            }
+            // create three more levels with all the words
+            for (i = 0; i < 3; i++) {
+                levels.push(combine(words, words, length));
             }
             return levels;
         }
 
-        var words = [
+        const levels = createLevels([
             'I',
             'the',
             'go',
@@ -69,29 +92,40 @@
             'they',
             'she',
             'here'
-        ];
+        ]);
 
-        var levels = createLevels(words);
-        var level = 0;
-        var word = 0;
-
+        const state = {
+            level: 0,
+            word: 0,
+        };
+        if (localStorage.getItem('state')) {
+            const savedState = JSON.parse(localStorage.getItem('state'));
+            if (savedState.level < levels.length) {
+                state.level = savedState.level;
+                state.word = 0;
+            }
+        }
+        
         document.onclick = function() {
-            if (word >= levels[level].length) {
-                level++;
-                word = 0;
+            if (state.word >= levels[state.level].length) {
+                state.level++;
+                state.word = 0;
                 document.getElementById('word').innerHTML = '<img src="' + WELLDONE_GIFS[Math.floor(Math.random() * WELLDONE_GIFS.length)] + '" />';
                 return;
             }
-            document.getElementById('level').innerHTML = level + 1 + " of " + levels.length;
-            document.getElementById('word').innerHTML = levels[level][word];
+            console.log(state, state.level, state.word, levels.length);
+            document.getElementById('level').innerHTML = state.level + 1 + " of " + levels.length;
+            document.getElementById('word').innerHTML = levels[state.level][state.word];
             document.getElementById('word').style.color = COLOURS[Math.floor(Math.random() * COLOURS.length)];
             document.getElementById('word').style.fontFamily = FONTS[Math.floor(Math.random() * FONTS.length)];
-            word++;
+            document.getElementById('progress').style.width = ((state.word + 1) / levels[state.level].length * 100) + "%";
+            state.word++;
+            localStorage.setItem('state', JSON.stringify(state));
         }
     </script>
 </head>
 <body>
-    <h1>Readmon - Level <span id="level"></span></h1>
+    <h1 onclick="level++; word = 0;">Readmon - Level <span id="level"></span></h1>
     <div style="
         display: flex;
         justify-content: center;
@@ -102,6 +136,11 @@
     " id="word">
         Click to start
     </div>
+
+    <div style="position: absolute; bottom: 0px; left: 0px; width: 100%">
+        <div style="background-color: green; height:24px;width:0%" id="progress"></div>
+    </div>
+
 </body>
 
 
